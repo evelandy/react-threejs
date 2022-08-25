@@ -1,43 +1,32 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
 import * as THREE from "three";
+import earthmap1k from '../src/images/earthmap1k.jpeg';
+import SceneInit from '../src/lib/SceneInit';
 
-class App extends Component {
-  componentDidMount() {
-    // === THREE.JS CODE START ===
-    var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
-    var renderer = new THREE.WebGLRenderer();
+function App() {
+  useEffect(() => {
+    const test = new SceneInit('myThreeJsCanvas');
+    test.initialize();
+    test.animate();
 
-    renderer.setSize( window.innerWidth, window.innerHeight );
-    document.body.appendChild( renderer.domElement );
+    const uvTexture = new THREE.TextureLoader().load(earthmap1k);
 
-    // var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    // var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-    // var cube = new THREE.Mesh( geometry, material );
-    // scene.add( cube );
+    const ge3 = new THREE.SphereGeometry(8);
+    const me3 = new THREE.MeshStandardMaterial({
+      map: uvTexture,
+    });
+    const sphereMe3 = new THREE.Mesh(ge3, me3);
+    sphereMe3.position.x = 0;
+    sphereMe3.position.y = 0;
+    test.scene.add(sphereMe3);
+  }, []);
 
-    const geometry = new THREE.ConeGeometry( 2, 2, 10 );
-    const material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-    const cone = new THREE.Mesh( geometry, material );
-    scene.add( cone );
-
-    camera.position.z = 5;
-
-      var animate = function () {
-        requestAnimationFrame( animate );
-        cone.rotation.x += 0.01;
-        cone.rotation.y += 0.01;
-        renderer.render( scene, camera );
-      };
-      animate();
-    // === THREE.JS EXAMPLE CODE END ===
-  }
-  render() {
-    return (
-      <div ref={ref => (this.mount = ref)} />
-    )
-  }
+  return (
+    <div>
+      <canvas id="myThreeJsCanvas" />
+    </div>
+  );
 }
 
 export default App;
