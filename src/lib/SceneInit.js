@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import Stats from 'three/examples/jsm/libs/stats.module';
+// import Stats from 'three/examples/jsm/libs/stats.module';
+import space from '../images/milky-way.jpeg';
 
 export default class SceneInit {
   constructor(canvasId) {
@@ -17,7 +18,7 @@ export default class SceneInit {
 
     // NOTE: Additional components.
     this.clock = undefined;
-    this.stats = undefined;
+    //this.stats = undefined;
     this.controls = undefined;
 
     // NOTE: Lighting is basically required.
@@ -49,25 +50,27 @@ export default class SceneInit {
 
     this.clock = new THREE.Clock();
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.stats = Stats();
-    document.body.appendChild(this.stats.dom);
+    // this.stats = Stats();
+    // document.body.appendChild(this.stats.dom);
 
     // ambient light which is for the whole scene
     this.ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     this.scene.add(this.ambientLight);
 
     // directional light - parallel sun rays
-    this.directionalLight = new THREE.DirectionalLight(0xfafafa, 0.5);
+    this.directionalLight = new THREE.DirectionalLight(0xfafafa, 1);
     // this.directionalLight.castShadow = true;
-    this.directionalLight.position.set(0, 10, 10);
-    this.scene.add(this.directionalLight);
+    this.directionalLight.position.set(50, 20, 10);
+    // this.directionalLight.position.set(0, 10, 10);
+    this.dlHelper = new THREE.DirectionalLightHelper(this.directionalLight, 3);
+    this.scene.add(this.directionalLight, this.dlHelper);
 
     // if window resizes
     window.addEventListener('resize', () => this.onWindowResize(), false);
 
     // NOTE: Load space background.
-    // this.loader = new THREE.TextureLoader();
-    // this.scene.background = this.loader.load('./pics/space.jpeg');
+    this.loader = new THREE.TextureLoader();
+    this.scene.background = this.loader.load(space);
 
     // NOTE: Declare uniforms to pass into glsl shaders.
     // this.uniforms = {
@@ -82,7 +85,7 @@ export default class SceneInit {
     // requestAnimationFrame(this.animate.bind(this));
     window.requestAnimationFrame(this.animate.bind(this));
     this.render();
-    this.stats.update();
+    // this.stats.update();
     this.controls.update();
   }
 
